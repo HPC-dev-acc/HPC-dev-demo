@@ -59,11 +59,11 @@ Run the test suite after installing dependencies:
 ```sh
 npm test
 ```
-The test suite currently reports **42 passed suites (232 tests)** with coverage **84 % statements, 76 % branches, 84 % functions, 88 % lines**. Continuous integration runs the same command on each push. Detailed reports and UAT results are documented in `docs/04-test.md`.
+The test suite uses a jsdom environment with a stubbed Canvas context from [`jest.setup.js`](./jest.setup.js) and currently reports **42 passed suites (232 tests)** with coverage **84 % statements, 76 % branches, 84 % functions, 88 % lines**. Continuous integration runs the same command on each push. Detailed reports and UAT results are documented in `docs/04-test.md`.
 
 ## Versioning
 
-Run `npm run build` (which executes `scripts/update-version.mjs`) to read the version from `package.json` and generate `version.js` plus versioned HTML query parameters. The build now accepts full Semantic Versioning strings, including prerelease identifiers. `version.js` defines a global `window.__APP_VERSION__` loaded before `main.js`, and this value is used in the UI to display the current version.
+Run `npm run build` to regenerate `version.js`, `version.global.js`, and cache-busting query strings. The script prioritizes the `RELEASE_VERSION` environment variable (stripping an optional leading `v`) and falls back to `package.json` when absent. It records `BUILD_NUMBER`/`GITHUB_RUN_NUMBER` and the first seven characters of `GIT_SHA`/`GITHUB_SHA`, defaulting to `devsha` when unspecified. `version.js` exports these constants, while `version.global.js` imports them to set `window.__APP_VERSION__ = v<RELEASE_VERSION>` and an optional `window.__APP_BUILD_META__ = build.<run>.<sha7>`. `index.html` loads `version.global.js` via a `<script type="module">` tag.
 
 ## Documentation
 

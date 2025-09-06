@@ -1,7 +1,7 @@
 # Test Plan
 
 ## Test Plan
-Each design specification point in `docs/02-design.md` is verified by an automated or manual test. The document now includes architecture and sequence diagrams alongside SDS details of tick order, asset preload sequence, input queuing, physics formulas, NPC state machines, and responsive splash/title styling so tests can assert against precise behavior. Jest is used for unit tests and GitHub Actions runs them on every push.
+Each design specification point in `docs/02-design.md` is verified by an automated or manual test. The document now includes architecture and sequence diagrams alongside SDS details of tick order, asset preload sequence, input queuing, physics formulas, NPC state machines, and responsive splash/title styling so tests can assert against precise behavior. Jest is used for unit tests and GitHub Actions runs them on every push, with a jsdom environment and a minimal Canvas stub provided by [`jest.setup.js`](../jest.setup.js).
 
 Tag-based releases use `.github/workflows/release-and-tests.yml` to run tiered suites: `alpha` tags trigger integration tests, while `beta`, `rc`, and stable tags run UAT and regression tests before publishing artifacts or releases.
 
@@ -79,12 +79,12 @@ Tag-based releases use `.github/workflows/release-and-tests.yml` to run tiered s
 ### T-15: Versioning build
 - **Design Spec**: DS-15
 - **Test**: Manual (`npm run build`)
-- **Description**: running the build generates `version.js` and updates HTML query parameters.
+- **Description**: running the build generates `version.js`/`version.global.js` and updates HTML query parameters.
 
 ### T-16: Semantic version handling
 - **Design Spec**: DS-16
 - **Test File**: `update-version.test.js`
-- **Description**: prerelease versions update HTML parameters, `version.js`, and `manifest.json`.
+- **Description**: prerelease versions update HTML parameters, `version.js`/`version.global.js`, and `manifest.json`.
 
 ### T-17: High-resolution background
 - **Design Spec**: DS-17

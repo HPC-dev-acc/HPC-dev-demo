@@ -17,6 +17,7 @@ test('build updates files for prerelease versions', () => {
   fs.cpSync('index.html', path.join(tmp, 'index.html'));
   fs.cpSync('manifest.json', path.join(tmp, 'manifest.json'));
   fs.cpSync('version.js', path.join(tmp, 'version.js'));
+  fs.cpSync('version.global.js', path.join(tmp, 'version.global.js'));
 
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   const prerelease = '2.0.0-beta.1';
@@ -30,13 +31,43 @@ test('build updates files for prerelease versions', () => {
   expect(doc.querySelector('#start-version').textContent).toBe(`v${prerelease}`);
   expect(doc.querySelector('#version-pill').textContent).toBe(`v${prerelease}`);
   expect(doc.querySelector('link[rel="stylesheet"]').getAttribute('href')).toBe(`style.css?v=${prerelease}`);
-  expect(doc.querySelector('script[src^="version.js"]').getAttribute('src')).toBe(`version.js?v=${prerelease}`);
-  expect(doc.querySelector('script[type="module"]').getAttribute('src')).toBe(`main.js?v=${prerelease}`);
+  expect(
+    doc
+      .querySelector('script[type="module"][src^="version.global.js"]')
+      .getAttribute('src')
+  ).toBe(`version.global.js?v=${prerelease}`);
+  expect(
+    doc
+      .querySelector('script[type="module"][src^="main.js"]')
+      .getAttribute('src')
+  ).toBe(`main.js?v=${prerelease}`);
   expect(doc.querySelector('link[rel="manifest"]').getAttribute('href')).toBe(`manifest.json?v=${prerelease}`);
 
   const manifest = JSON.parse(fs.readFileSync(path.join(tmp, 'manifest.json'), 'utf8'));
   expect(manifest.version).toBe(prerelease);
-  const versionJs = fs.readFileSync(path.join(tmp, 'version.js'), 'utf8').trim();
-  expect(versionJs).toBe(`window.__APP_VERSION__ = '${prerelease}';`);
+  const versionJs = fs
+    .readFileSync(path.join(tmp, 'version.js'), 'utf8')
+    .trim()
+    .split('\n');
+  expect(versionJs).toEqual([
+    `export const RELEASE_VERSION = '${prerelease}';`,
+    "export const BUILD_NUMBER    = '';",
+    "export const GIT_SHA         = 'devsha';",
+  ]);
+  const versionGlobal = fs
+    .readFileSync(path.join(tmp, 'version.global.js'), 'utf8')
+    .trim()
+    .split('\n');
+  expect(versionGlobal).toEqual([
+    "import { RELEASE_VERSION, BUILD_NUMBER, GIT_SHA } from './version.js';",
+    '',
+    "if (typeof window !== 'undefined') {",
+    "  window.__APP_VERSION__ = 'v' + RELEASE_VERSION;",
+    '  const meta = [];',
+    '  if (BUILD_NUMBER) meta.push(BUILD_NUMBER);',
+    '  if (GIT_SHA) meta.push(GIT_SHA);',
+    "  window.__APP_BUILD_META__ = meta.length ? `build.${meta.join('.')}` : '';",
+    '}',
+  ]);
 });
 

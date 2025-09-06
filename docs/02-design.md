@@ -160,7 +160,7 @@ sequenceDiagram
 | --- | --- | --- | --- |
 | `createGameState()` | — | Object | Initializes and returns the mutable game state. |
 | `showHUD()` | — | void | Reveals HUD elements while keeping the debug panel hidden. |
-| `scripts/update-version.mjs` | — | void | Reads `package.json` and emits `version.js` plus versioned query parameters. |
+| `scripts/update-version.mjs` | — | void | Emits `version.js` and `version.global.js` from `RELEASE_VERSION`/`BUILD_NUMBER`/`GIT_SHA` env vars (fallback `package.json`) and updates HTML/manifest query parameters. |
 
 ## ADR (Architecture Decision Record)
 - Chosen **vanilla JS** for minimal dependencies; build tools (Babel, Jest) are used only for development.
@@ -189,7 +189,7 @@ sequenceDiagram
 | DS-12 | Level objects load from `assets/objects.custom.js` with collision and transparency flags. | NFR-007 | T-12 |
 | DS-13 | Level design mode for dragging objects, nudge/rotate controls, and JSON export. | NFR-007 | T-13 |
 | DS-14 | Progressive Web App support for offline play and installation. | FR-050, NFR-008 | T-14 |
-| DS-15 | Build script exposes `__APP_VERSION__` and versioned assets. | — | T-15 |
+| DS-15 | Build script generates `version.js`/`version.global.js` to expose `__APP_VERSION__`, `__APP_BUILD_META__`, and versioned assets. | — | T-15 |
 | DS-16 | Semantic versioning accepts prerelease identifiers. | — | T-16 |
 | DS-17 | Canvas scales by device pixel ratio with image smoothing disabled; background images regenerate using the current canvas height to render at native resolution. | NFR-002 | T-17 |
 | DS-18 | Language switcher updates HUD text and pedestrian dialogs. | FR-001, FR-002, NFR-005 | T-18 |

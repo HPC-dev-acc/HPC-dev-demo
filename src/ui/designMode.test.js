@@ -1,4 +1,4 @@
-import pkg from '../../package.json' assert { type: 'json' };
+import { RELEASE_VERSION } from '../../version.js';
 import { TILE, COLL_TILE } from '../game/physics.js';
 import { CAMERA_OFFSET_Y } from '../render.js';
 
@@ -41,7 +41,7 @@ async function loadGame() {
       setTransform: jest.fn(),
     };
   canvas.getContext = () => ctx;
-  window.__APP_VERSION__ = pkg.version;
+  window.__APP_VERSION__ = `v${RELEASE_VERSION}`;
   global.requestAnimationFrame = jest.fn();
   window.requestAnimationFrame = global.requestAnimationFrame;
   const audio = {

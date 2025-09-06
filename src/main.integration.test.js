@@ -1,4 +1,4 @@
-import pkg from '../package.json' assert { type: 'json' };
+import { RELEASE_VERSION } from '../version.js';
 import { TILE, COLL_TILE, resolveCollisions, findGroundY } from './game/physics.js';
 import { BASE_W, COLL_W } from './game/width.js';
 import { SPAWN_X, SPAWN_Y, Y_OFFSET } from './game/state.js';
@@ -18,7 +18,7 @@ async function loadGame() {
   Object.defineProperty(window, 'innerHeight', { configurable: true, value: 540 });
   Object.defineProperty(canvas, 'clientWidth', { configurable: true, value: 960 });
   Object.defineProperty(canvas, 'clientHeight', { configurable: true, value: 540 });
-  window.__APP_VERSION__ = pkg.version;
+  window.__APP_VERSION__ = `v${RELEASE_VERSION}`;
   global.requestAnimationFrame = jest.fn();
   Object.defineProperty(document, 'fullscreenElement', { writable: true, configurable: true, value: null });
 
